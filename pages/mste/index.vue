@@ -1,7 +1,7 @@
 <template>
-  <section class="container">
+  <div class="container">
     <h3>MSTE</h3>
-  </section>
+  </div>
 </template>
 
 <script>
@@ -9,6 +9,3 @@ export default {
   layout: 'Main'
 }
 </script>
-
-<style>
-</style>
