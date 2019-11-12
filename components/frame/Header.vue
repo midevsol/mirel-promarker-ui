@@ -6,7 +6,7 @@
         <router-link class="mui-global-navi-item" tag="li" to="/" exact>
           <a>TOP</a>
         </router-link>
-        <router-link class="mui-global-navi-item" tag="li" to="/" exact>
+        <router-link class="mui-global-navi-item" tag="li" to="/mste" exact>
           <a>MSTE</a>
         </router-link>
       </ul>
