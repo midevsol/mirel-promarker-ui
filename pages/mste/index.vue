@@ -1,9 +1,14 @@
 <template>
-  <div>
-    <h1>MSTE</h1>
-  </div>
+  <section class="container">
+    <h3>MSTE</h3>
+  </section>
 </template>
 
 <script>
-export default {}
+export default {
+  layout: 'Main'
+}
 </script>
+
+<style>
+</style>
