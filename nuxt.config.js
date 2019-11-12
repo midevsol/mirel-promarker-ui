@@ -62,4 +62,13 @@ export default {
     extend (config, ctx) {
     }
   }
+
+  /*
+   * append settings.
+   */
+  ,
+  router: {
+    base: '/mirel'
+  }
+
 }
