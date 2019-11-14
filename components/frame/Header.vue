@@ -1,16 +1,19 @@
 <template lang="html">
   <header id="mui-global-wrap">
     <div class="mui-global-logo-wrap" />
-    <nav id="mui-global-navi">
-      <ul>
-        <router-link class="mui-global-navi-item" tag="li" to="/" exact>
-          <a>TOP</a>
-        </router-link>
-        <router-link class="mui-global-navi-item" tag="li" to="/mste" exact>
-          <a>MSTE</a>
-        </router-link>
-      </ul>
-    </nav>
+    <div>
+      <nav id="mui-global-navi">
+        <ul>
+          <router-link class="mui-global-navi-item" tag="li" to="/" exact>
+            <a>TOP</a>
+          </router-link>
+          <router-link class="mui-global-navi-item" tag="li" to="/mste" exact>
+            <a>MSTE</a>
+          </router-link>
+        </ul>
+      </nav>
+    </div>
+    <div class="mui-global-util-wrap" />
   </header>
 </template>
 
