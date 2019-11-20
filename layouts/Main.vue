@@ -17,8 +17,4 @@ export default {
 </script>
 
 <style lang="css">
-.html {
-}
-.body {
-}
 </style>
