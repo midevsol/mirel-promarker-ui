@@ -80,6 +80,14 @@ export default {
     '/mste/initialize': 'http://zipcloud.ibsnet.co.jp/api/search?zipcode=7830060&limit=1'
   },
 
+  /*
+   * bootstrapVue
+   */
+  bootstrapVue: {
+    /* bootstrapCSS */
+    css: true,
+    /* bootsrapVueCSS */
+    bvCSS: true
   }
 
 }
