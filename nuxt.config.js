@@ -29,6 +29,8 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    // axios.
+    '~/plugins/src/axios'
   ],
   /*
   ** Nuxt.js dev-modules
@@ -51,6 +53,7 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
+    proxy: true
   },
   /*
   ** Build configuration
@@ -61,14 +64,22 @@ export default {
     */
     extend (config, ctx) {
     }
-  }
+  },
 
   /*
    * append settings.
    */
-  ,
   router: {
     base: '/mirel'
+  },
+
+  /*
+   * proxy
+   */
+  proxy: {
+    '/mste/initialize': 'http://zipcloud.ibsnet.co.jp/api/search?zipcode=7830060&limit=1'
+  },
+
   }
 
 }
