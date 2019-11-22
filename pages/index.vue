@@ -3,10 +3,10 @@
     <div>
       <logo />
       <h1 class="title">
-        mipla-v
+        mirelplatform
       </h1>
       <h2 class="subtitle">
-        mipla frontend project
+        Nuxt.js Frontend Service.
       </h2>
       <div class="links">
         <a
