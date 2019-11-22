@@ -128,7 +128,7 @@ export default {
   },
 
   async asyncData ({ app }) {
-    const url = `/mste/initialize`
+    const url = `/api/mste/suggest`
     const data = await app.$axios.$get(url)
       .then((resp) => {
         return { datas: resp.data }
