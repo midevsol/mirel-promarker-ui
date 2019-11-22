@@ -9,26 +9,19 @@
         Nuxt.js Frontend Service.
       </h2>
       <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
         <nuxt-link
           to="/mste"
           class="button--grey"
         >
           MSTE
         </nuxt-link>
+        <a
+          href="https://dev.azure.com/mireljp/"
+          target="_blank"
+          class="button--grey"
+        >
+          Azure DevOps project
+        </a>
       </div>
     </div>
   </div>
