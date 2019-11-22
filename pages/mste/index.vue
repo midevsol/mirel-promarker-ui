@@ -6,7 +6,7 @@
     <div class="inner">
       <div class="rightitems">
         <b-button variant="secondary" @click="refresh()">
-          refresh
+          Refresh
         </b-button>
         <b-button variant="secondary" @click="callHistory()">
           Call history
