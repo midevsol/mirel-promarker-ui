@@ -5,12 +5,12 @@
     </div>
     <div class="inner">
       <div class="rightitems">
-        <button type="button" class="btn btn-secondary">
+        <b-button variant="secondary" @click="refresh()">
           Initialize items
-        </button>
-        <button type="button" class="btn btn-secondary">
+        </b-button>
+        <b-button variant="secondary" @click="callHistory()">
           Call history
-        </button>
+        </b-button>
       </div>
       <hr>
       <div>
@@ -61,9 +61,9 @@
           </b-row>
         </b-container>
         <hr>
-        <button type="button" class="btn btn-primary">
+        <b-button variant="primary" @click="generate(eparams)">
           Generate
-        </button>
+        </b-button>
         <hr>
       </div>
     </div>
@@ -134,7 +134,23 @@ export default {
         return { datas: resp.data }
       })
     return data
+  },
+
+  methods: {
+    refresh () {
+
+    },
+
+    callHistory () {
+
+    },
+
+    generate (eparams) {
+      
+    }
+
   }
+
 }
 </script>
 
