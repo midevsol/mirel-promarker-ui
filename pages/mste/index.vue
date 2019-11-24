@@ -112,10 +112,21 @@ export default {
 
     generate (eparams) {
 
+    createRequest (body) {
+      const assigned = Object.assign(body.eparams)
+        .filter((item) => {
+          return !item.noSend
+        })
+      const pitems = []
+      for (const key in assigned) {
+        pitems.push({
+          id: assigned[key].id,
+          value: assigned[key].value
+        })
+      }
+      return pitems
     }
-
   }
-
 }
 </script>
 
