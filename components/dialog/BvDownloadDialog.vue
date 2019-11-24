@@ -61,17 +61,6 @@ export default {
     },
     initialize () {
     },
-    showBvDownloadDialog (files) {
-      this.files.push({
-        name: 'フィアウル1',
-        fileId: 'abcabc'
-      })
-      this.files.push({
-        name: 'フィアウル2',
-        fileId: 'defdef'
-      })
-      this.$refs.bv_dialog.show()
-    },
     hideBvDownloadDialog () {
       this.files = []
       this.$refs.bv_dialog.hide()
