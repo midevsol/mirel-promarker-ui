@@ -3,7 +3,7 @@
     <b-modal
       id="bv_dialog"
       ref="bv_dialog"
-      size="xl"
+      size="lg"
       scrollable
       centered
       ok-only
