@@ -68,74 +68,42 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   layout: 'Main',
   data () {
     return {
-      eparams: [
-        {
-          'id': 'applicationId',
-          'name': 'アプリケーションID',
-          'valueType': 'text',
-          'value': 'biz',
-          'note': 'アプリケーションのIDを指定してください。例： biz, sms, fms･･･',
-          'sort': 10
-        },
-        {
-          'id': 'applicationName',
-          'name': '名称',
-          'valueType': 'text',
-          'value': 'Biz∫',
-          'note': 'アプリケーションの名称を入力してください。',
-          'sort': 10
-        }
-      ],
-      fltStrStencilKinds: {
-        'selected': 'bizapp',
-        'options': [
-          {
-            'text': 'bizapp',
-            'value': 'Biz∫アプリケーション'
-          }
-        ]
+      eparams: [],
+      fltStrStencilCategory: {
+        'selected': '',
+        'items': []
       },
-      fltStrStencilCds: {
-        'selected': '19001',
-        'options': [
-          {
-            'text': '19001',
-            'value': 'Biz∫販売 バッチ処理（Leagcy）'
-          }
-        ]
-      },
-      types: [
-        'text',
-        'number',
-        'email',
-        'password',
-        'search',
-        'url',
-        'tel',
-        'date',
-        'time',
-        'range',
-        'color'
-      ]
+      fltStrStencilCd: {
+        'selected': '',
+        'items': []
+      }
     }
   },
-
-  async asyncData ({ app }) {
-    const url = `/api/mste/suggest`
-    const data = await app.$axios.$get(url)
-      .then((resp) => {
-        return { datas: resp.data }
-      })
-    return data
+  params: {
+    bvDownloadFiles: [
+      {
+        id: 'aidhi',
+        name: 'namena'
+      }
+    ]
   },
-
   methods: {
     refresh () {
-
+      axios.post(
+        `/api/mste/suggest`,
+        { content: this.createRequest(this) }
+      )
+        .then((resp) => {
+          Object.assign(this.eparams, resp.data.model.params.childs)
+          this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
+          this.fltStrStencilCd = resp.data.model.fltStrStencilCd
+        })
     },
 
     callHistory () {
