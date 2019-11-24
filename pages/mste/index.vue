@@ -21,14 +21,11 @@
               <label for="head_stencil_kind">分類</label>
             </b-col>
             <b-col sm="9">
-              <b-form-select id="head_stencil_kind" v-model="fltStrStencilKinds.selected">
-                <option
-                  v-for="(option) in fltStrStencilKinds.options"
-                  :key="option.text"
-                >
-                  {{ option.value }}
-                </option>
-              </b-form-select>
+              <b-form-select
+                id="head_stencil_kind"
+                v-model="fltStrStencilCategory.selected"
+                :options="fltStrStencilCategory.items"
+              />
             </b-col>
           </b-row>
           <b-row class="my-1">
@@ -36,14 +33,11 @@
               <label for="head_stencil_cd">ステンシル</label>
             </b-col>
             <b-col sm="9">
-              <b-form-select id="head_stencil_cd" v-model="fltStrStencilCds.selected">
-                <option
-                  v-for="(option) in fltStrStencilCds.options"
-                  :key="option.text"
-                >
-                  {{ option.value }}
-                </option>
-              </b-form-select>
+              <b-form-select
+                id="head_stencil_cd"
+                v-model="fltStrStencilCd.selected"
+                :options="fltStrStencilCd.items"
+              />
             </b-col>
           </b-row>
           <hr>
