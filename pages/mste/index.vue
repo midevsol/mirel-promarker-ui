@@ -107,10 +107,31 @@ export default {
     },
 
     callHistory () {
-
     },
 
     generate (eparams) {
+      axios.post(
+        `/api/mste/generate`,
+        { content: this.createRequest(this) }
+      ).then((resp) => {
+        this.$root.$emit('bv::show::modal', 'bv_dialog', {
+          files: [
+            {
+              fileId: '1',
+              name: 'フィアウル1'
+            },
+            {
+              fileId: '2',
+              name: 'フィアウル2'
+            },
+            {
+              fileId: '3',
+              name: 'フィアウル3'
+            }
+          ]
+        })
+      })
+    },
 
     createRequest (body) {
       const assigned = Object.assign(body.eparams)
