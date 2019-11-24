@@ -64,6 +64,9 @@
         <b-button variant="primary" @click="generate(eparams)">
           Generate
         </b-button>
+        <b-button variant="secondary">
+          Show parameter as JSON
+        </b-button>
         <hr>
       </div>
     </div>
