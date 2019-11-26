@@ -5,11 +5,14 @@
     </div>
     <div class="inner">
       <div class="rightitems">
-        <b-button variant="secondary" @click="refresh()">
-          Refresh
+        <b-button v-b-modal.modal-psv-dialog variant="secondary">
+          Json形式でパラメータを入力する
         </b-button>
-        <b-button variant="secondary" @click="callHistory()">
-          Call history
+        <b-button variant="secondary" @click="refresh()">
+          クリア
+        </b-button>
+        <b-button disabled variant="secondary" @click="callHistory()">
+          実行履歴
         </b-button>
       </div>
       <hr>
@@ -55,14 +58,44 @@
           </b-row>
         </b-container>
         <hr>
-        <b-button variant="primary" @click="generate(eparams)">
+        <b-button :disabled="disabled || processing" variant="primary" @click="generate()">
           Generate
-        </b-button>
-        <b-button variant="secondary">
-          Show parameter as JSON
         </b-button>
         <hr>
       </div>
+    </div>
+    <div>
+      <b-modal
+        id="modal-psv-dialog"
+        ref="modal"
+        title="実行パラメータ情報"
+        ok-title="Apply"
+        cancel-title="Cancel"
+        centered
+        scrollable
+        @show="psvResetModal"
+        @hidden="psvResetModal"
+        @ok="psvHandleOk"
+      >
+        <form ref="form" @submit.stop.prevent="handleSubmit">
+          <b-form-group
+            :state="psvState"
+            label="Json"
+            label-for="name-input"
+            invalid-feedback="Json is required"
+          >
+            <b-form-textarea
+              id="name-input"
+              v-model="psvBody"
+              rows="5"
+              :state="psvState"
+              required
+              placeholder="あぁごめんちゃい～
+未実装にゃのだ～ =^_^="
+            />
+          </b-form-group>
+        </form>
+      </b-modal>
     </div>
   </div>
 </template>
