@@ -85,6 +85,12 @@ export default {
    */
   proxy: {
     '/mste/initialize': 'http://zipcloud.ibsnet.co.jp/api/search?zipcode=7830060&limit=1',
+    '/mapi': {
+      target: 'http://localhost:8080/mipla2/',
+      pathRewrite: {
+        '^/mapi': '/'
+      }
+    },
     '/api/mste': {
       target: 'http://localhost:8080/mipla2/apps/mste/api/',
       pathRewrite: {
