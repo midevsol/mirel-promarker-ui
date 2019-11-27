@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <div class="container_title">
-      MSTE
+      MSTE 払出画面
     </div>
     <div class="inner">
       <div class="rightitems">
-        <b-button v-b-modal.modal-psv-dialog variant="secondary">
+        <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
           Json形式でパラメータを入力する
         </b-button>
-        <b-button variant="secondary" @click="refresh()">
+        <b-button :disabled="disabled || processing" variant="secondary" @click="refresh()">
           クリア
         </b-button>
         <b-button disabled variant="secondary" @click="callHistory()">
@@ -43,6 +43,32 @@
               />
             </b-col>
           </b-row>
+          <b-row class="my-1">
+            <b-col sm="3" />
+            <b-col sm="9" style="text-align:left">
+              <span v-if="stencilConfig.description !== null">
+                {{ stencilConfig.description }}
+              </span>
+            </b-col>
+          </b-row>
+          <b-row class="my-1">
+            <b-col sm="3" />
+            <b-col sm="9" style="text-align:right">
+              <span v-if="stencilConfig.serial !== null">
+                Stencil S/N：{{ stencilConfig.serial }}
+              </span>
+              <span v-if="stencilConfig.serial !== null && stencilConfig.astUpdate !== null">
+                &nbsp;/&nbsp;
+              </span>
+              <span v-if="stencilConfig.lastUpdate !== null">
+                Last update：{{ stencilConfig.lastUpdate }}
+              </span>
+              <span v-if="stencilConfig.lastUpdateUser !== null">
+                by {{ stencilConfig.lastUpdateUser }}
+              </span>
+              <br>
+            </b-col>
+          </b-row>
           <hr>
           <legend>業務オブジェクト</legend>
           <b-row v-for="eparam in eparams" :key="eparam.id" class="my-1">
@@ -50,7 +76,7 @@
               <label :for="`eparam-${eparam.id}`">{{ eparam.name }}</label>
             </b-col>
             <b-col sm="4">
-              <b-form-input :id="`eparam-${eparam.id}`" v-model="eparam.value" placeholder="Input value." />
+              <b-form-input :id="`eparam-${eparam.id}`" v-model="eparam.value" :placeholder="eparam.placeholder" />
             </b-col>
             <b-col sm="5" class="fm_notes">
               <span>{{ eparam.note }}</span>
@@ -107,7 +133,17 @@ export default {
   layout: 'Main',
   data () {
     return {
+      disabled: false,
+      processing: false,
       eparams: [],
+      stencilConfig: {
+        id: null,
+        name: null,
+        serial: null,
+        lastUpdate: null,
+        lastUpdateUser: null,
+        description: null
+      },
       fltStrStencilCategory: {
         'selected': '',
         'items': []
@@ -115,7 +151,9 @@ export default {
       fltStrStencilCd: {
         'selected': '',
         'items': []
-      }
+      },
+      psvBody: '',
+      psvState: null
     }
   },
   params: {
@@ -128,57 +166,118 @@ export default {
   },
   methods: {
     refresh () {
+      this.processing = true
       axios.post(
-        `/api/mste/suggest`,
+        // `/api/mste/suggest`,
+        '/mapi/apps/mste/api/suggest',
         { content: this.createRequest(this) }
-      )
-        .then((resp) => {
-          Object.assign(this.eparams, resp.data.model.params.childs)
-          this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
-          this.fltStrStencilCd = resp.data.model.fltStrStencilCd
-        })
+      ).then((resp) => {
+        if (!resp.data.errs === false &&
+          resp.data.errs.length > 0) {
+          this.bvMsgBoxErr(resp.data.errs)
+          this.processing = false
+          return
+        }
+
+        Object.assign(this.eparams, resp.data.model.params.childs)
+        this.stencilConfig = resp.data.model.stencil.config
+        this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
+        this.fltStrStencilCd = resp.data.model.fltStrStencilCd
+        this.processing = false
+      })
     },
 
     callHistory () {
     },
 
-    generate (eparams) {
+    generate () {
+      this.processing = true
       axios.post(
-        `/api/mste/generate`,
+        `/mapi/apps/mste/api/generate`,
         { content: this.createRequest(this) }
       ).then((resp) => {
-        this.$root.$emit('bv::show::modal', 'bv_dialog', {
-          files: [
-            {
-              fileId: '1',
-              name: 'フィアウル1'
-            },
-            {
-              fileId: '2',
-              name: 'フィアウル2'
-            },
-            {
-              fileId: '3',
-              name: 'フィアウル3'
+        /* eslint-disable no-console */
+        console.log(resp)
+        /* eslint-enable no-console */
+        if (!resp.data.model) {
+          this.processing = false
+          return
+        }
+
+        if (!resp.data.errs === false &&
+          resp.data.errs.length > 0) {
+          this.bvMsgBoxErr(resp.data.errs)
+          this.processing = false
+          return
+        }
+
+        if (!resp.data.model.files === false) {
+          const paramFiles = []
+          for (const key in resp.data.model.files) {
+            paramFiles[key] = {
+              fileId: resp.data.model.files[key][0],
+              name: resp.data.model.files[key][1]
             }
-          ]
-        })
+          }
+          this.$root.$emit('bv::show::modal', 'bv_dialog', { files: paramFiles })
+        }
+        this.processing = false
+      }).catch((errors) => {
+        this.bvMsgBoxErr(errors)
+        this.processing = false
       })
     },
 
     createRequest (body) {
+      const pitems = {}
+      pitems.stencilCanonicalName = body.fltStrStencilCd.selected
+
       const assigned = Object.assign(body.eparams)
         .filter((item) => {
           return !item.noSend
         })
-      const pitems = []
       for (const key in assigned) {
-        pitems.push({
-          id: assigned[key].id,
-          value: assigned[key].value
-        })
+        pitems[assigned[key].id] = assigned[key].value
       }
       return pitems
+    },
+
+    bvMsgBoxErr (message) {
+      if (!message) {
+        message = 'エラーが発生しました。管理者に問い合わせてください。'
+      }
+      this.$bvModal.msgBoxOk(message, {
+        title: 'Error',
+        size: 'lg',
+        okTitle: 'Close',
+        headerBgVariant: 'danger',
+        headerTextVariant: 'light',
+        footerBgVariant: 'light',
+        scrollable: true,
+        centered: true
+      })
+    },
+    psvCheckFormValidity () {
+      const valid = this.$refs.form.checkValidity()
+      this.psvState = valid
+      return valid
+    },
+    psvResetModal () {
+      this.psvBody = ''
+      this.psvState = null
+    },
+    psvHandleOk (bvModalEvt) {
+      bvModalEvt.preventDefault()
+      this.psvHandleSubmit()
+    },
+    psvHandleSubmit () {
+      if (!this.psvCheckFormValidity()) {
+        return
+      }
+      // this.submittedNames.push(this.name)
+      this.$nextTick(() => {
+        this.$refs.modal.hide()
+      })
     }
   }
 }
