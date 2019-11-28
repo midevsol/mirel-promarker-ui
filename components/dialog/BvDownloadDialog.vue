@@ -60,7 +60,9 @@ export default {
       /* eslint-disable no-console */
       console.log('File download will start...', file)
       /* eslint-enable no-console */
-      this.callDownloadApi(file)
+      const files = []
+      files.push(file)
+      this.callDownloadApi(files)
     },
     downloadAll () {
       this.callDownloadApi(this.files)
