@@ -184,6 +184,9 @@ export default {
         this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
         this.fltStrStencilCd = resp.data.model.fltStrStencilCd
         this.processing = false
+      }).catch((errors) => {
+        this.bvMsgBoxErr(errors)
+        this.processing = false
       })
     },
 
@@ -243,7 +246,7 @@ export default {
     },
 
     bvMsgBoxErr (message) {
-      if (!message) {
+      if (!message || message === undefined) {
         message = 'エラーが発生しました。管理者に問い合わせてください。'
       }
       this.$bvModal.msgBoxOk(message, {
