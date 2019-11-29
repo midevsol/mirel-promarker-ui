@@ -76,19 +76,49 @@ export default {
     callDownloadApi (files) {
       axios.post(
         `/mapi/commons/download`, {
-          responseType: 'blob',
           content: files
+        }, {
+          'responseType': 'blob'
         }).then((resp) => {
+        if (!resp.data.errs === false &&
+          resp.data.errs.length > 0) {
+          this.bvMsgBoxErr(resp.data.errs)
+          this.processing = false
+          return
+        }
+
         const name = resp.headers['content-disposition'].split('=')[1]
         const type = resp.headers['content-type']
         const blob = new Blob([resp.data], { type })
+        const url = (window.URL || window.webkitURL).createObjectURL(blob)
+
         const link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = name
+        link.href = url
+        link.download = decodeURI(name)
+        document.body.appendChild(link)
         link.click()
+        document.body.removeChild(link)
       }).catch((errors) => {
+        /* eslint-disable no-console */
+        console.log('Cougth error.', errors)
+        /* eslint-enable no-console */
         this.bvMsgBoxErr(errors)
         this.processing = false
+      })
+    },
+    bvMsgBoxErr (message) {
+      if (!message || message === undefined) {
+        message = 'エラーが発生しました。管理者に問い合わせてください。'
+      }
+      this.$bvModal.msgBoxOk(message, {
+        title: 'Error',
+        size: 'lg',
+        okTitle: 'Close',
+        headerBgVariant: 'danger',
+        headerTextVariant: 'light',
+        footerBgVariant: 'light',
+        scrollable: true,
+        centered: true
       })
     }
   }
