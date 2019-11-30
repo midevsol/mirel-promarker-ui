@@ -17,81 +17,92 @@
       </div>
       <hr>
       <div>
-        <b-container fluid>
-          <legend>ステンシル情報</legend>
-          <b-row class="my-1">
-            <b-col sm="3">
-              <label for="head_stencil_kind">分類</label>
-            </b-col>
-            <b-col sm="9">
-              <b-form-select
-                id="head_stencil_kind"
-                v-model="fltStrStencilCategory.selected"
-                :options="fltStrStencilCategory.items"
-                required
-                @change="stencilSelected()"
-              />
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <b-col sm="3">
-              <label for="head_stencil_cd">ステンシル</label>
-            </b-col>
-            <b-col sm="9">
-              <b-form-select
-                id="head_stencil_cd"
-                v-model="fltStrStencilCd.selected"
-                :options="fltStrStencilCd.items"
-                required
-                @change="stencilSelected()"
-              />
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <b-col sm="3" />
-            <b-col sm="9" style="text-align:left">
-              <span v-if="stencilConfig.description !== null">
-                {{ stencilConfig.description }}
-              </span>
-            </b-col>
-          </b-row>
-          <b-row class="my-1">
-            <b-col sm="3" />
-            <b-col sm="9" style="text-align:right">
-              <span v-if="stencilConfig.serial !== null">
-                Stencil S/N：{{ stencilConfig.serial }}
-              </span>
-              <span v-if="stencilConfig.serial !== null && stencilConfig.astUpdate !== null">
-                &nbsp;/&nbsp;
-              </span>
-              <span v-if="stencilConfig.lastUpdate !== null">
-                Last update：{{ stencilConfig.lastUpdate }}
-              </span>
-              <span v-if="stencilConfig.lastUpdateUser !== null">
-                by {{ stencilConfig.lastUpdateUser }}
-              </span>
-              <br>
-            </b-col>
-          </b-row>
-          <hr>
-          <legend>業務オブジェクト</legend>
-          <b-row v-for="eparam in eparams" :key="eparam.id" class="my-1">
-            <b-col sm="3">
-              <label :for="`eparam-${eparam.id}`">{{ eparam.name }}</label>
-            </b-col>
-            <b-col sm="4">
-              <b-form-input :id="`eparam-${eparam.id}`" v-model="eparam.value" :placeholder="eparam.placeholder" required />
-            </b-col>
-            <b-col sm="5" class="fm_notes">
-              <span>{{ eparam.note }}</span>
-            </b-col>
-          </b-row>
-        </b-container>
-        <hr>
-        <b-button :disabled="disabled || processing" variant="primary" @click="generate()">
-          Generate
-        </b-button>
-        <hr>
+        <form ref="form1" @submit.stop.prevent="mainHandleSubmit">
+          <b-form-group
+            invalid-feedback="Required item error."
+          >
+            <b-container fluid>
+              <legend>ステンシル情報</legend>
+              <b-row class="my-1">
+                <b-col sm="3">
+                  <label for="head_stencil_kind">分類</label>
+                </b-col>
+                <b-col sm="9">
+                  <b-form-select
+                    id="head_stencil_kind"
+                    v-model="fltStrStencilCategory.selected"
+                    :options="fltStrStencilCategory.items"
+                    required
+                    @change="stencilSelected()"
+                  />
+                </b-col>
+              </b-row>
+              <b-row class="my-1">
+                <b-col sm="3">
+                  <label for="head_stencil_cd">ステンシル</label>
+                </b-col>
+                <b-col sm="9">
+                  <b-form-select
+                    id="head_stencil_cd"
+                    v-model="fltStrStencilCd.selected"
+                    :options="fltStrStencilCd.items"
+                    required
+                    @change="stencilSelected()"
+                  />
+                </b-col>
+              </b-row>
+              <b-row class="my-1">
+                <b-col sm="3" />
+                <b-col sm="9" style="text-align:left">
+                  <span v-if="stencilConfig.description !== null">
+                    {{ stencilConfig.description }}
+                  </span>
+                </b-col>
+              </b-row>
+              <b-row class="my-1">
+                <b-col sm="3" />
+                <b-col sm="9" style="text-align:right">
+                  <span v-if="stencilConfig.serial !== null">
+                    Stencil S/N：{{ stencilConfig.serial }}
+                  </span>
+                  <span v-if="stencilConfig.serial !== null && stencilConfig.astUpdate !== null">
+                    &nbsp;/&nbsp;
+                  </span>
+                  <span v-if="stencilConfig.lastUpdate !== null">
+                    Last update：{{ stencilConfig.lastUpdate }}
+                  </span>
+                  <span v-if="stencilConfig.lastUpdateUser !== null">
+                    by {{ stencilConfig.lastUpdateUser }}
+                  </span>
+                  <br>
+                </b-col>
+              </b-row>
+              <hr>
+              <legend>業務オブジェクト</legend>
+              <b-row v-for="eparam in eparams" :key="eparam.id" class="my-1">
+                <b-col sm="3">
+                  <label :for="`eparam-${eparam.id}`">{{ eparam.name }}</label>
+                </b-col>
+                <b-col sm="4">
+                  <b-form-input
+                    :id="`eparam-${eparam.id}`"
+                    v-model="eparam.value"
+                    :placeholder="eparam.placeholder"
+                    required
+                  />
+                </b-col>
+                <b-col sm="5" class="fm_notes">
+                  <span>{{ eparam.note }}</span>
+                </b-col>
+              </b-row>
+            </b-container>
+            <hr>
+            <b-button :disabled="disabled || processing" variant="primary" @click="generate()">
+              Generate
+            </b-button>
+            <hr>
+          </b-form-group>
+        </form>
       </div>
     </div>
     <div>
@@ -278,6 +289,7 @@ export default {
         centered: true
       })
     },
+
     psvCheckFormValidity () {
       const valid = this.$refs.form.checkValidity()
       this.psvState = valid
