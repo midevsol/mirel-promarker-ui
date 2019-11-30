@@ -28,6 +28,8 @@
                 id="head_stencil_kind"
                 v-model="fltStrStencilCategory.selected"
                 :options="fltStrStencilCategory.items"
+                required
+                @change="stencilSelected()"
               />
             </b-col>
           </b-row>
@@ -40,6 +42,8 @@
                 id="head_stencil_cd"
                 v-model="fltStrStencilCd.selected"
                 :options="fltStrStencilCd.items"
+                required
+                @change="stencilSelected()"
               />
             </b-col>
           </b-row>
@@ -76,7 +80,7 @@
               <label :for="`eparam-${eparam.id}`">{{ eparam.name }}</label>
             </b-col>
             <b-col sm="4">
-              <b-form-input :id="`eparam-${eparam.id}`" v-model="eparam.value" :placeholder="eparam.placeholder" />
+              <b-form-input :id="`eparam-${eparam.id}`" v-model="eparam.value" :placeholder="eparam.placeholder" required />
             </b-col>
             <b-col sm="5" class="fm_notes">
               <span>{{ eparam.note }}</span>
@@ -245,11 +249,25 @@ export default {
       return pitems
     },
 
-    bvMsgBoxErr (message) {
-      if (!message || message === undefined) {
-        message = 'エラーが発生しました。管理者に問い合わせてください。'
+    stencilSelected () {
+      this.refresh()
+    },
+
+    bvMsgBoxErr (msgs) {
+      if (!msgs || msgs === undefined) {
+        msgs = 'エラーが発生しました。管理者に問い合わせてください。'
       }
-      this.$bvModal.msgBoxOk(message, {
+      let converted = ''
+      if (Array.isArray(msgs)) {
+        for (const key in msgs) {
+          converted += msgs[key]
+          converted += ' '
+        }
+      } else {
+        converted += msgs
+      }
+
+      this.$bvModal.msgBoxOk(converted, {
         title: 'Error',
         size: 'lg',
         okTitle: 'Close',
@@ -287,5 +305,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-
+#fm_notes {
+  white-space: pre-wrap; /* なんでダメなんだぁ。 */
+}
 </style>
