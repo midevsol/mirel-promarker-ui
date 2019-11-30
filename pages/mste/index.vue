@@ -107,7 +107,7 @@
         @hidden="psvResetModal"
         @ok="psvHandleOk"
       >
-        <form ref="form" @submit.stop.prevent="handleSubmit">
+        <form ref="form" @submit.stop.prevent="psvHandleSubmit">
           <b-form-group
             :state="psvState"
             label="Json"
