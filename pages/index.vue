@@ -1,12 +1,11 @@
 <template>
   <div class="container">
     <div>
-      <logo />
       <h1 class="title">
         mirelplatform
       </h1>
       <h2 class="subtitle">
-        Nuxt.js Frontend Service.
+        frontend service
       </h2>
       <div class="links">
         <nuxt-link
@@ -20,7 +19,7 @@
           target="_blank"
           class="button--grey"
         >
-          Azure DevOps project
+          mireljp-dev
         </a>
       </div>
     </div>
@@ -28,12 +27,10 @@
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
 
 export default {
   layout: 'Main',
   components: {
-    Logo
   }
 }
 </script>
