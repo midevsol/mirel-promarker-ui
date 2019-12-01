@@ -8,7 +8,7 @@
         <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
           Json形式でパラメータを入力する
         </b-button>
-        <b-button :disabled="disabled || processing" variant="secondary" @click="refresh()">
+        <b-button :disabled="disabled || processing" variant="secondary" @click="clearAll()">
           クリア
         </b-button>
         <b-button disabled variant="secondary" @click="callHistory()">
@@ -33,7 +33,7 @@
                     v-model="fltStrStencilCategory.selected"
                     :options="fltStrStencilCategory.items"
                     required
-                    @change="stencilSelected()"
+                    @change="stencilCategorySelected()"
                   />
                 </b-col>
               </b-row>
@@ -52,7 +52,9 @@
                 </b-col>
               </b-row>
               <b-row class="my-1">
-                <b-col sm="3" />
+                <b-col sm="3">
+                  <label v-if="stencilConfig.description !== null" for="head_stencil_cd"> ステンシルについて</label>
+                </b-col>
                 <b-col sm="9" style="text-align:left">
                   <span v-if="stencilConfig.description !== null">
                     {{ stencilConfig.description }}
@@ -151,14 +153,7 @@ export default {
       disabled: false,
       processing: false,
       eparams: [],
-      stencilConfig: {
-        id: null,
-        name: null,
-        serial: null,
-        lastUpdate: null,
-        lastUpdateUser: null,
-        description: null
-      },
+      stencilConfig: this.defaultStencilConfig,
       fltStrStencilCategory: {
         'selected': '',
         'items': []
@@ -171,17 +166,14 @@ export default {
       psvState: null
     }
   },
-  params: {
-    bvDownloadFiles: [
-      {
-        id: 'aidhi',
-        name: 'namena'
-      }
-    ]
+  created () {
+    // refresh
+    this.clearAll()
   },
   methods: {
     refresh () {
       this.processing = true
+      this.clearParams()
       axios.post(
         // `/api/mste/suggest`,
         '/mapi/apps/mste/api/suggest',
@@ -194,8 +186,12 @@ export default {
           return
         }
 
-        Object.assign(this.eparams, resp.data.model.params.childs)
-        this.stencilConfig = resp.data.model.stencil.config
+        if (!resp.data.model.params === false) {
+          Object.assign(this.eparams, resp.data.model.params.childs)
+        }
+        if (!resp.data.model.stencil === false) {
+          this.stencilConfig = resp.data.model.stencil.config
+        }
         this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
         this.fltStrStencilCd = resp.data.model.fltStrStencilCd
         this.processing = false
@@ -203,6 +199,18 @@ export default {
         this.bvMsgBoxErr(errors)
         this.processing = false
       })
+    },
+
+    clearAll () {
+      this.fltStrStencilCategory.selected = '*'
+      this.fltStrStencilCd.selected = '*'
+      this.clearParams()
+      this.refresh()
+    },
+
+    clearParams () {
+      this.eparams = []
+      this.stencilConfig = this.defaultStencilConfig()
     },
 
     callHistory () {
@@ -248,6 +256,7 @@ export default {
 
     createRequest (body) {
       const pitems = {}
+      pitems.stencilCategoy = body.fltStrStencilCategory.selected
       pitems.stencilCanonicalName = body.fltStrStencilCd.selected
 
       const assigned = Object.assign(body.eparams)
@@ -259,7 +268,10 @@ export default {
       }
       return pitems
     },
-
+    stencilCategorySelected () {
+      this.fltStrStencilCd.selected = '*'
+      this.refresh()
+    },
     stencilSelected () {
       this.refresh()
     },
@@ -288,6 +300,17 @@ export default {
         scrollable: true,
         centered: true
       })
+    },
+
+    defaultStencilConfig () {
+      return {
+        id: null,
+        name: null,
+        serial: null,
+        lastUpdate: null,
+        lastUpdateUser: null,
+        description: null
+      }
     },
 
     psvCheckFormValidity () {
