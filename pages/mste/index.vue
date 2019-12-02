@@ -80,7 +80,7 @@
                 </b-col>
               </b-row>
               <hr>
-              <legend>業務オブジェクト</legend>
+              <legend>データエレメント</legend>
               <b-row v-for="eparam in eparams" :key="eparam.id" class="my-1">
                 <b-col sm="3">
                   <label :for="`eparam-${eparam.id}`">{{ eparam.name }}</label>
