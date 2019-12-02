@@ -6,13 +6,13 @@
     <div class="inner">
       <div class="rightitems">
         <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
-          Json形式でパラメータを入力する
+          📎Json形式
         </b-button>
         <b-button :disabled="disabled || processing" variant="secondary" @click="clearAll()">
-          クリア
+          📄クリア
         </b-button>
         <b-button disabled variant="secondary" @click="callHistory()">
-          実行履歴
+          🕒実行履歴
         </b-button>
       </div>
       <hr>
@@ -111,11 +111,12 @@
       <b-modal
         id="modal-psv-dialog"
         ref="modal"
-        title="実行パラメータ情報"
+        title="実行条件（JSON形式）"
         ok-title="Apply"
         cancel-title="Cancel"
         centered
         scrollable
+        size="lg"
         @show="psvResetModal"
         @hidden="psvResetModal"
         @ok="psvHandleOk"
@@ -123,18 +124,17 @@
         <form ref="form" @submit.stop.prevent="psvHandleSubmit">
           <b-form-group
             :state="psvState"
-            label="Json"
+            label="【この機能は開発中です】JSON形式で実行条件を編集できます。"
             label-for="name-input"
             invalid-feedback="Json is required"
           >
             <b-form-textarea
               id="name-input"
               v-model="psvBody"
-              rows="5"
+              rows="15"
               :state="psvState"
               required
-              placeholder="あぁごめんちゃい～
-未実装にゃのだ～ =^_^="
+              placeholder="input json"
             />
           </b-form-group>
         </form>
@@ -312,14 +312,40 @@ export default {
         description: null
       }
     },
-
+    jsonValueToParam (jsonValue) {
+    },
+    paramToJsonValue (eparams) {
+      if (!this.fltStrStencilCategory.selected) {
+        return {}
+      }
+      if (!this.fltStrStencilCd.selected) {
+        return {}
+      }
+      const dataElements = []
+      for (const key in eparams) {
+        const item = {}
+        item.id = eparams[key].id
+        item.value = eparams[key].value
+        dataElements.push(item)
+      }
+      return {
+        stencilCategory: this.fltStrStencilCategory.selected,
+        stencilCd: this.fltStrStencilCd.selected,
+        dataElements
+      }
+    },
     psvCheckFormValidity () {
-      const valid = this.$refs.form.checkValidity()
-      this.psvState = valid
-      return valid
+      this.bvMsgBoxErr('Sorry, this feature is not yet available.')
+      return false
+
+      // service no available
+      // const valid = this.$refs.form.checkValidity()
+      // this.psvState = valid
+      // return valid
     },
     psvResetModal () {
       this.psvBody = ''
+      this.psvBody = JSON.stringify(this.paramToJsonValue(this.eparams), null, '  ')
       this.psvState = null
     },
     psvHandleOk (bvModalEvt) {
@@ -330,7 +356,7 @@ export default {
       if (!this.psvCheckFormValidity()) {
         return
       }
-      // this.submittedNames.push(this.name)
+      this.jsonValueToParam(this.psvBody)
       this.$nextTick(() => {
         this.$refs.modal.hide()
       })
