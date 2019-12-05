@@ -312,7 +312,15 @@ export default {
         description: null
       }
     },
-    jsonValueToParam (jsonValue) {
+    jsonValueToParam (psvBody) {
+      const psvBodyObj = JSON.parse(psvBody)
+      this.fltStrStencilCategory.selected = psvBodyObj.stencilCategory
+      this.fltStrStencilCd.selected = psvBodyObj.stencilCd
+      for (const key in psvBodyObj,dataElements) {
+        const id = psvBodyObj.dataElements[key].id
+        const value = psvBodyObj.dataElements[key].value
+      }
+
     },
     paramToJsonValue (eparams) {
       if (!this.fltStrStencilCategory.selected) {
@@ -321,6 +329,7 @@ export default {
       if (!this.fltStrStencilCd.selected) {
         return {}
       }
+
       const dataElements = []
       for (const key in eparams) {
         const item = {}
