@@ -223,6 +223,8 @@ export default {
       this.fltStrStencilCategory.selected = '*'
       this.fltStrStencilCd.selected = '*'
       this.fltStrSerialNo.selected = '*'
+      this.cateogryNoSelected = true
+      this.stencilNoSelected = true
       this.clearParams()
       this.refresh()
     },
