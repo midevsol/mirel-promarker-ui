@@ -124,7 +124,7 @@
         <form ref="form" @submit.stop.prevent="psvHandleSubmit">
           <b-form-group
             :state="psvState"
-            label="【この機能は開発中です】JSON形式で実行条件を編集できます。"
+            label="JSON形式で実行条件を編集できます。"
             label-for="name-input"
             invalid-feedback="Json is required"
           >
@@ -171,10 +171,10 @@ export default {
     this.clearAll()
   },
   methods: {
-    refresh () {
+    async refresh () {
       this.processing = true
       this.clearParams()
-      axios.post(
+      await axios.post(
         // `/api/mste/suggest`,
         '/mapi/apps/mste/api/suggest',
         { content: this.createRequest(this) }
@@ -312,16 +312,37 @@ export default {
         description: null
       }
     },
-    jsonValueToParam (psvBody) {
+
+    async jsonValueToParam (psvBody) {
+      await this.clearAll
       const psvBodyObj = JSON.parse(psvBody)
+
+      // category selected
       this.fltStrStencilCategory.selected = psvBodyObj.stencilCategory
+      await this.refresh()
+
+      // stencil selected
       this.fltStrStencilCd.selected = psvBodyObj.stencilCd
-      for (const key in psvBodyObj,dataElements) {
+      await this.refresh()
+
+      const eparams = Object.assign(this.eparams)
+      this.eparams = []
+      for (const key in psvBodyObj.dataElements) {
         const id = psvBodyObj.dataElements[key].id
         const value = psvBodyObj.dataElements[key].value
+        this.setEparamById(eparams, id, value)
       }
-
+      Object.assign(this.eparams, eparams)
     },
+
+    setEparamById (eparams, id, value) {
+      for (const key in eparams) {
+        if (id === eparams[key].id) {
+          eparams[key].value = value
+        }
+      }
+    },
+
     paramToJsonValue (eparams) {
       if (!this.fltStrStencilCategory.selected) {
         return {}
@@ -344,13 +365,9 @@ export default {
       }
     },
     psvCheckFormValidity () {
-      this.bvMsgBoxErr('Sorry, this feature is not yet available.')
-      return false
-
-      // service no available
-      // const valid = this.$refs.form.checkValidity()
-      // this.psvState = valid
-      // return valid
+      const valid = this.$refs.form.checkValidity()
+      this.psvState = valid
+      return valid
     },
     psvResetModal () {
       this.psvBody = ''
@@ -362,6 +379,7 @@ export default {
       this.psvHandleSubmit()
     },
     psvHandleSubmit () {
+      this.processing = true
       if (!this.psvCheckFormValidity()) {
         return
       }
@@ -369,6 +387,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.modal.hide()
       })
+      this.processing = false
     }
   }
 }
