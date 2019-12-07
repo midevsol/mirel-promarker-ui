@@ -32,6 +32,7 @@
                     id="head_stencil_kind"
                     v-model="fltStrStencilCategory.selected"
                     :options="fltStrStencilCategory.items"
+                    :disabled="disabled || processing"
                     required
                     @change="stencilCategorySelected()"
                   />
@@ -46,6 +47,7 @@
                     id="head_stencil_cd"
                     v-model="fltStrStencilCd.selected"
                     :options="fltStrStencilCd.items"
+                    :disabled="disabled || processing || cateogryNoSelected"
                     required
                     @change="stencilSelected()"
                   />
@@ -62,19 +64,26 @@
                 </b-col>
               </b-row>
               <b-row class="my-1">
+                <b-col sm="7" />
+                <b-col sm="1">
+                  <label for="head_serial_no">シリアル</label>
+                </b-col>
+                <b-col sm="4">
+                  <b-form-select
+                    id="head_serial_no"
+                    v-model="fltStrSerialNo.selected"
+                    :options="fltStrSerialNo.items"
+                    :disabled="disabled || processing || stencilNoSelected"
+                    required
+                    @change="serialSelected()"
+                  />
+                </b-col>
+              </b-row>
+              <b-row class="my-1">
                 <b-col sm="3" />
                 <b-col sm="9" style="text-align:right">
-                  <span v-if="stencilConfig.serial !== null">
-                    Stencil S/N：{{ stencilConfig.serial }}
-                  </span>
-                  <span v-if="stencilConfig.serial !== null && stencilConfig.astUpdate !== null">
-                    &nbsp;/&nbsp;
-                  </span>
-                  <span v-if="stencilConfig.lastUpdate !== null">
-                    Last update：{{ stencilConfig.lastUpdate }}
-                  </span>
                   <span v-if="stencilConfig.lastUpdateUser !== null">
-                    by {{ stencilConfig.lastUpdateUser }}
+                    Stencil Updated by {{ stencilConfig.lastUpdateUser }}
                   </span>
                   <br>
                 </b-col>
@@ -99,7 +108,7 @@
               </b-row>
             </b-container>
             <hr>
-            <b-button :disabled="disabled || processing" variant="primary" @click="generate()">
+            <b-button :disabled="disabled || processing || stencilNoSelected" variant="primary" @click="generate()">
               Generate
             </b-button>
             <hr>
@@ -152,6 +161,8 @@ export default {
     return {
       disabled: false,
       processing: false,
+      stencilNoSelected: true,
+      cateogryNoSelected: true,
       eparams: [],
       stencilConfig: this.defaultStencilConfig,
       fltStrStencilCategory: {
@@ -159,6 +170,10 @@ export default {
         'items': []
       },
       fltStrStencilCd: {
+        'selected': '',
+        'items': []
+      },
+      fltStrSerialNo: {
         'selected': '',
         'items': []
       },
@@ -189,11 +204,13 @@ export default {
         if (!resp.data.model.params === false) {
           Object.assign(this.eparams, resp.data.model.params.childs)
         }
-        if (!resp.data.model.stencil === false) {
+        if (!resp.data.model.stencil === false &&
+          !resp.data.model.stencil.config === false) {
           this.stencilConfig = resp.data.model.stencil.config
         }
         this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
         this.fltStrStencilCd = resp.data.model.fltStrStencilCd
+        this.fltStrSerialNo = resp.data.model.fltStrSerialNo
         this.processing = false
       }).catch((errors) => {
         this.bvMsgBoxErr(errors)
@@ -204,6 +221,7 @@ export default {
     clearAll () {
       this.fltStrStencilCategory.selected = '*'
       this.fltStrStencilCd.selected = '*'
+      this.fltStrSerialNo.selected = '*'
       this.clearParams()
       this.refresh()
     },
@@ -258,6 +276,7 @@ export default {
       const pitems = {}
       pitems.stencilCategoy = body.fltStrStencilCategory.selected
       pitems.stencilCanonicalName = body.fltStrStencilCd.selected
+      pitems.serialNo = body.fltStrSerialNo.selected
 
       const assigned = Object.assign(body.eparams)
         .filter((item) => {
@@ -270,9 +289,16 @@ export default {
     },
     stencilCategorySelected () {
       this.fltStrStencilCd.selected = '*'
+      this.fltStrSerialNo.selected = ''
+      this.cateogryNoSelected = false
       this.refresh()
     },
     stencilSelected () {
+      this.fltStrSerialNo.selected = ''
+      this.refresh()
+      this.stencilNoSelected = false
+    },
+    serialSelected () {
       this.refresh()
     },
 
@@ -325,6 +351,10 @@ export default {
       this.fltStrStencilCd.selected = psvBodyObj.stencilCd
       await this.refresh()
 
+      // serial selected
+      this.fltStrSerialNo.selected = psvBodyObj.serialNo
+      await this.refresh()
+
       const eparams = Object.assign(this.eparams)
       this.eparams = []
       for (const key in psvBodyObj.dataElements) {
@@ -361,6 +391,7 @@ export default {
       return {
         stencilCategory: this.fltStrStencilCategory.selected,
         stencilCd: this.fltStrStencilCd.selected,
+        serialNo: this.fltStrSerialNo.selected,
         dataElements
       }
     },
