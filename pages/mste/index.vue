@@ -99,6 +99,7 @@
                     :id="`eparam-${eparam.id}`"
                     v-model="eparam.value"
                     :placeholder="eparam.placeholder"
+                    :disabled="disabled || processing"
                     required
                   />
                 </b-col>
