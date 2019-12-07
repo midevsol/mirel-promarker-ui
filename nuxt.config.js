@@ -107,6 +107,10 @@ export default {
     css: true,
     /* bootsrapVueCSS */
     bvCSS: true
+  },
+
+  configureWebpack: {
+    devtool: 'source-map'
   }
 
 }
