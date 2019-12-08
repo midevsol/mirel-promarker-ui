@@ -5,11 +5,14 @@
     </div>
     <div class="inner">
       <div class="rightitems">
-        <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
+        <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing || stencilNoSelected" variant="secondary">
           📎Json形式
         </b-button>
+        <b-button :disabled="disabled || processing || stencilNoSelected" variant="secondary" @click="clearDelems()">
+          📄ステンシル定義を再取得
+        </b-button>
         <b-button :disabled="disabled || processing" variant="secondary" @click="clearAll()">
-          📄クリア
+          📄全てクリア
         </b-button>
         <b-button disabled variant="secondary" @click="callHistory()">
           🕒実行履歴
@@ -217,6 +220,11 @@ export default {
         this.bvMsgBoxErr(errors)
         this.processing = false
       })
+    },
+
+    clearDelems () {
+      this.clearParams()
+      this.refresh()
     },
 
     clearAll () {
