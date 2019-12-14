@@ -201,6 +201,7 @@ export default {
         if (!resp.data.errs === false &&
           resp.data.errs.length > 0) {
           this.bvMsgBoxErr(resp.data.errs)
+          this.stencilNoSelected = true
           this.processing = false
           return
         }
@@ -211,6 +212,9 @@ export default {
         if (!resp.data.model.stencil === false &&
           !resp.data.model.stencil.config === false) {
           this.stencilConfig = resp.data.model.stencil.config
+          this.stencilNoSelected = false
+        } else {
+          this.stencilNoSelected = true
         }
         this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
         this.fltStrStencilCd = resp.data.model.fltStrStencilCd
@@ -218,6 +222,7 @@ export default {
         this.processing = false
       }).catch((errors) => {
         this.bvMsgBoxErr(errors)
+        this.stencilNoSelected = true
         this.processing = false
       })
     },
@@ -238,6 +243,7 @@ export default {
     },
 
     clearParams () {
+      this.fltStrSerialNo = this.defaultStore()
       this.eparams = []
       this.stencilConfig = this.defaultStencilConfig()
     },
@@ -308,7 +314,6 @@ export default {
     stencilSelected () {
       this.fltStrSerialNo.selected = ''
       this.refresh()
-      this.stencilNoSelected = false
     },
     serialSelected () {
       this.refresh()
@@ -431,6 +436,12 @@ export default {
         this.$refs.modal.hide()
       })
       this.processing = false
+    },
+    defaultStore () {
+      return {
+        'selected': '',
+        'items': []
+      }
     }
   }
 }
