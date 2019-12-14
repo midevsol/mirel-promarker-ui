@@ -302,6 +302,7 @@ export default {
       this.fltStrStencilCd.selected = '*'
       this.fltStrSerialNo.selected = ''
       this.cateogryNoSelected = false
+      this.stencilNoSelected = true
       this.refresh()
     },
     stencilSelected () {
