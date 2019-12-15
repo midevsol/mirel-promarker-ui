@@ -5,18 +5,20 @@
     </div>
     <div class="inner">
       <div class="rightitems">
-        <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing || stencilNoSelected" variant="secondary">
-          📎Json形式
-        </b-button>
         <b-button :disabled="disabled || processing || stencilNoSelected" variant="secondary" @click="clearDelems()">
           📄ステンシル定義を再取得
         </b-button>
         <b-button :disabled="disabled || processing" variant="secondary" @click="clearAll()">
           📄全てクリア
         </b-button>
+        <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
+          📎Json形式
+        </b-button>
+        <!--
         <b-button disabled variant="secondary" @click="callHistory()">
           🕒実行履歴
         </b-button>
+        -->
       </div>
       <hr>
       <div>
@@ -112,7 +114,7 @@
               </b-row>
             </b-container>
             <hr>
-            <b-button :disabled="disabled || processing || stencilNoSelected" variant="primary" @click="generate()">
+            <b-button :disabled="disabled || processing || serialNoNoSelected" variant="primary" @click="generate()">
               Generate
             </b-button>
             <hr>
@@ -165,6 +167,7 @@ export default {
     return {
       disabled: false,
       processing: false,
+      serialNoNoSelected: true,
       stencilNoSelected: true,
       cateogryNoSelected: true,
       eparams: [],
@@ -193,7 +196,7 @@ export default {
     async refresh () {
       this.processing = true
       this.clearParams()
-      await axios.post(
+      const ret = await axios.post(
         // `/api/mste/suggest`,
         '/mapi/apps/mste/api/suggest',
         { content: this.createRequest(this) }
@@ -201,9 +204,8 @@ export default {
         if (!resp.data.errs === false &&
           resp.data.errs.length > 0) {
           this.bvMsgBoxErr(resp.data.errs)
-          this.stencilNoSelected = true
           this.processing = false
-          return
+          return false
         }
 
         if (!resp.data.model.params === false) {
@@ -212,19 +214,21 @@ export default {
         if (!resp.data.model.stencil === false &&
           !resp.data.model.stencil.config === false) {
           this.stencilConfig = resp.data.model.stencil.config
-          this.stencilNoSelected = false
-        } else {
-          this.stencilNoSelected = true
         }
+
         this.fltStrStencilCategory = resp.data.model.fltStrStencilCategory
         this.fltStrStencilCd = resp.data.model.fltStrStencilCd
         this.fltStrSerialNo = resp.data.model.fltStrSerialNo
+
         this.processing = false
+        return true
       }).catch((errors) => {
         this.bvMsgBoxErr(errors)
-        this.stencilNoSelected = true
         this.processing = false
+        return false
       })
+
+      return ret
     },
 
     clearDelems () {
@@ -232,14 +236,15 @@ export default {
       this.refresh()
     },
 
-    clearAll () {
+    async clearAll () {
       this.fltStrStencilCategory.selected = '*'
       this.fltStrStencilCd.selected = '*'
       this.fltStrSerialNo.selected = '*'
       this.cateogryNoSelected = true
       this.stencilNoSelected = true
+      this.serialNoNoSelected = true
       this.clearParams()
-      this.refresh()
+      await this.refresh()
     },
 
     clearParams () {
@@ -309,14 +314,66 @@ export default {
       this.fltStrSerialNo.selected = ''
       this.cateogryNoSelected = false
       this.stencilNoSelected = true
+      this.serialNoNoSelected = true
+
+      if (!this.isFltStrSelected(this.fltStrStencilCategory) ||
+        this.fltStrStencilCategory.selected === '*') {
+        this.categoryNoSelected = true
+        return false
+      }
+
       this.refresh()
+      return true
     },
     stencilSelected () {
       this.fltStrSerialNo.selected = ''
+      this.cateogryNoSelected = false
+      this.stencilNoSelected = false
+      this.serialNoNoSelected = true
+
+      if (!this.isFltStrSelected(this.fltStrStencilCd) ||
+        this.fltStrStencilCd.selected === '*') {
+        this.stencilNoSelected = true
+        return false
+      }
+
       this.refresh()
+
+      this.serialNoNoSelected = false
+      // if (this.isFltStrSelected(this.fltStrSerialNo)) {
+      //   this.serialNoNoSelected = false
+      // }
+
+      return true
     },
     serialSelected () {
+      this.cateogryNoSelected = false
+      this.stencilNoSelected = false
+      this.serialNoNoSelected = false
+
+      // if (!this.isFltStrSelected(this.fltStrSerialNo)) {
+      //   this.serialNoNoSelected = true
+      //   return false
+      // }
+
       this.refresh()
+      return true
+    },
+
+    isFltStrSelected (fltStr) {
+      if (!fltStr) {
+        return false
+      }
+      if (!Array.isArray(fltStr.items)) {
+        return false
+      }
+      if (!fltStr.selected) {
+        return false
+      }
+      if (fltStr.selected.length === 0) {
+        return false
+      }
+      return true
     },
 
     bvMsgBoxErr (msgs) {
@@ -362,15 +419,21 @@ export default {
 
       // category selected
       this.fltStrStencilCategory.selected = psvBodyObj.stencilCategory
-      await this.refresh()
+      if (!await this.refresh()) {
+        return
+      }
 
       // stencil selected
       this.fltStrStencilCd.selected = psvBodyObj.stencilCd
-      await this.refresh()
+      if (!await this.refresh()) {
+        return
+      }
 
       // serial selected
       this.fltStrSerialNo.selected = psvBodyObj.serialNo
-      await this.refresh()
+      if (!await this.refresh()) {
+        return
+      }
 
       const eparams = Object.assign(this.eparams)
       this.eparams = []
@@ -432,6 +495,7 @@ export default {
         return
       }
       this.jsonValueToParam(this.psvBody)
+      this.serialSelected()
       this.$nextTick(() => {
         this.$refs.modal.hide()
       })
