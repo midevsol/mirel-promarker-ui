@@ -56,6 +56,12 @@ html {
   text-align: center;
 }
 
+@media (min-width: 1200px) {
+  .container {
+    max-width: 2500px;
+  }
+}
+
 .container_title {
   font-size: 30px;
 }
