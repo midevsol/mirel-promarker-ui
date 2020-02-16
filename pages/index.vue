@@ -14,6 +14,12 @@
         >
           MSTE
         </nuxt-link>
+        <nuxt-link
+          to="/qdev"
+          class="button--grey"
+        >
+          品質開発（テスト観点）
+        </nuxt-link>
         <a
           href="https://dev.azure.com/mireljp/"
           target="_blank"

@@ -13,6 +13,9 @@
           <b-nav-item to="/mste">
             MSTE
           </b-nav-item>
+          <b-nav-item to="/qdev">
+            QDEV
+          </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
       <b-navbar-nav class="ml-auto">
