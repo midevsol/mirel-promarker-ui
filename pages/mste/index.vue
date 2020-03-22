@@ -14,6 +14,9 @@
         <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
           📎Json形式
         </b-button>
+        <b-button :disabled="disabled || processing" @click="uploadDialog()" variant="secondary">
+          Upload（Dummy）
+        </b-button>
         <!--
         <b-button disabled variant="secondary" @click="callHistory()">
           🕒実行履歴
@@ -103,6 +106,15 @@
                   <b-form-input
                     :id="`eparam-${eparam.id}`"
                     v-model="eparam.value"
+                    v-if="eparam.type === 'file'"
+                    :placeholder="eparam.placeholder"
+                    :disabled="disabled || processing"
+                    required
+                  />
+                  <b-form-input
+                    :id="`eparam-${eparam.id}`"
+                    v-model="eparam.value"
+                    v-else
                     :placeholder="eparam.placeholder"
                     :disabled="disabled || processing"
                     required
@@ -160,6 +172,9 @@
 
 <script>
 import axios from 'axios'
+import Uppy from '@uppy/core'
+import XHRUpload from '@uppy/xhr-upload'
+import Dashboard from '@uppy/dashboard'
 
 export default {
   layout: 'Main',
@@ -192,6 +207,7 @@ export default {
     // refresh
     this.clearAll()
   },
+
   methods: {
     async refresh () {
       this.processing = true
@@ -358,6 +374,24 @@ export default {
 
       this.refresh()
       return true
+    },
+
+    uploadDialog () {
+      const uppy = Uppy()
+        .use(Dashboard, {
+          inline: true,
+          note: 'Select target file'
+        })
+        .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
+
+      uppy.getPlugin('Dashboard').openModal()
+      uppy.on('complete', (result) => {
+        // eslint-disable-next-line no-console
+        console.log(
+          'Upload complete! We’ve uploaded these files:',
+          result.successful
+        )
+      })
     },
 
     isFltStrSelected (fltStr) {
