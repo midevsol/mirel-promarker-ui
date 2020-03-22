@@ -30,7 +30,9 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/styles/common.css'
+    '@/assets/styles/common.css',
+    '@uppy/core/dist/style.css',
+    '@uppy/dashboard/dist/style.css'
   ],
   /*
   ** Plugins to load before mounting the App
