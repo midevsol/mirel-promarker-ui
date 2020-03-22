@@ -5,10 +5,10 @@
     </div>
     <div class="inner">
       <div class="rightitems">
-        <b-button :disabled="disabled || processing || stencilNoSelected" variant="secondary" @click="clearDelems()">
+        <b-button :disabled="disabled || processing || stencilNoSelected" @click="clearDelems()" variant="secondary">
           📄ステンシル定義を再取得
         </b-button>
-        <b-button :disabled="disabled || processing" variant="secondary" @click="clearAll()">
+        <b-button :disabled="disabled || processing" @click="clearAll()" variant="secondary">
           📄全てクリア
         </b-button>
         <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
@@ -38,8 +38,8 @@
                     v-model="fltStrStencilCategory.selected"
                     :options="fltStrStencilCategory.items"
                     :disabled="disabled || processing"
-                    required
                     @change="stencilCategorySelected()"
+                    required
                   />
                 </b-col>
               </b-row>
@@ -53,8 +53,8 @@
                     v-model="fltStrStencilCd.selected"
                     :options="fltStrStencilCd.items"
                     :disabled="disabled || processing || cateogryNoSelected"
-                    required
                     @change="stencilSelected()"
+                    required
                   />
                 </b-col>
               </b-row>
@@ -79,8 +79,8 @@
                     v-model="fltStrSerialNo.selected"
                     :options="fltStrSerialNo.items"
                     :disabled="disabled || processing || stencilNoSelected"
-                    required
                     @change="serialSelected()"
+                    required
                   />
                 </b-col>
               </b-row>
@@ -114,7 +114,7 @@
               </b-row>
             </b-container>
             <hr>
-            <b-button :disabled="disabled || processing || serialNoNoSelected" variant="primary" @click="generate()">
+            <b-button :disabled="disabled || processing || serialNoNoSelected" @click="generate()" variant="primary">
               Generate
             </b-button>
             <hr>
@@ -126,15 +126,15 @@
       <b-modal
         id="modal-psv-dialog"
         ref="modal"
+        @show="psvResetModal"
+        @hidden="psvResetModal"
+        @ok="psvHandleOk"
         title="実行条件（JSON形式）"
         ok-title="Apply"
         cancel-title="Cancel"
         centered
         scrollable
         size="lg"
-        @show="psvResetModal"
-        @hidden="psvResetModal"
-        @ok="psvHandleOk"
       >
         <form ref="form" @submit.stop.prevent="psvHandleSubmit">
           <b-form-group
@@ -145,9 +145,9 @@
           >
             <b-form-textarea
               id="name-input"
+              :state="psvState"
               v-model="psvBody"
               rows="15"
-              :state="psvState"
               required
               placeholder="input json"
             />
