@@ -379,8 +379,6 @@ export default {
     uploadDialog () {
       const uppy = Uppy()
         .use(Dashboard, {
-          inline: true,
-          note: 'Select target file'
         })
         .use(XHRUpload, { endpoint: 'https://api2.transloadit.com' })
 
