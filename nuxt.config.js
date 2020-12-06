@@ -18,7 +18,7 @@ export default {
 
   /** server settings */
   server: {
-    port: 80,
+    port: 8081,
     host: '0.0.0.0'
   },
 
