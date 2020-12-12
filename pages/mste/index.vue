@@ -14,6 +14,9 @@
         <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
           📎Json形式
         </b-button>
+        <b-button :disabled="disabled || processing " variant="secondary" @click="reloadStencilMaster()">
+          📄ステンシルマスタをリロード
+        </b-button>
         <!--
         <b-button disabled variant="secondary" @click="callHistory()">
           🕒実行履歴
@@ -229,6 +232,23 @@ export default {
       })
 
       return ret
+    },
+
+    async reloadStencilMaster () {
+      this.processing = true
+      await axios.post(
+        '/mapi/apps/mste/api/reloadStencilMaster',
+        { content: this.createRequest(this) }
+      ).then((resp) => {
+        // nop
+      }).catch((errors) => {
+        this.bvMsgBoxErr(errors)
+        this.processing = false
+        return false
+      })
+      this.clearParams()
+      this.refresh()
+      this.processing = false
     },
 
     clearDelems () {
