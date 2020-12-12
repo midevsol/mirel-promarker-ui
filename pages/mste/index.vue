@@ -33,7 +33,7 @@
               <legend>ステンシル情報</legend>
               <b-row class="my-1">
                 <b-col sm="3">
-                  <label for="head_stencil_kind">分類</label>
+                  <label for="head_stencil_kind" class="pm_label">分類</label>
                 </b-col>
                 <b-col sm="9">
                   <b-form-select
@@ -48,7 +48,7 @@
               </b-row>
               <b-row class="my-1">
                 <b-col sm="3">
-                  <label for="head_stencil_cd">ステンシル</label>
+                  <label for="head_stencil_cd" class="pm_label">ステンシル</label>
                 </b-col>
                 <b-col sm="9">
                   <b-form-select
@@ -63,7 +63,7 @@
               </b-row>
               <b-row class="my-1">
                 <b-col sm="3">
-                  <label v-if="stencilConfig.description !== null" for="head_stencil_cd"> ステンシルについて</label>
+                  <label v-if="stencilConfig.description !== null" for="head_stencil_cd" class="pm_label"> ステンシルについて</label>
                 </b-col>
                 <b-col sm="9" style="text-align:left">
                   <span v-if="stencilConfig.description !== null">
@@ -74,7 +74,7 @@
               <b-row class="my-1">
                 <b-col sm="7" />
                 <b-col sm="1">
-                  <label for="head_serial_no">シリアル</label>
+                  <label for="head_serial_no" class="pm_label">シリアル</label>
                 </b-col>
                 <b-col sm="4">
                   <b-form-select
@@ -100,7 +100,7 @@
               <legend>データエレメント</legend>
               <b-row v-for="eparam in eparams" :key="eparam.id" class="my-1">
                 <b-col sm="3">
-                  <label :for="`eparam-${eparam.id}`">{{ eparam.name }}</label>
+                  <label :for="`eparam-${eparam.id}`" class="pm_label">{{ eparam.name }}</label>
                 </b-col>
                 <b-col sm="4">
                   <b-form-input
