@@ -7,8 +7,18 @@
       scrollable
       centered
       ok-only
-      title="File download"
+      title="File management"
     >
+      <div v-if="uploadMode">
+        ファイル管理ID： {{ fileId }}
+        <b-form-file multiple v-model="uploadingFiles">
+        </b-form-file>
+        <div class="d-block">
+          <b-button class="mt-2" variant="outline-info" @click="upload()">
+            Upload
+          </b-button>
+        </div>
+      </div>
       <p class="my-4">
         <ul>
           <template v-for="file in files">
@@ -38,12 +48,22 @@ export default {
     return {
       disabled: false,
       processing: false,
-      files: []
+      files: [],
+      uploadMode: false,
+      fileId: null,
+      uploadingFiles: null
     }
   },
   mounted () {
     this.$root.$on('bv::show::modal', (bvEvent, param) => {
       this.files = []
+      this.uploadMode = false
+      if (!param.uploadMode === false) {
+        this.uploadMode = param.uploadMode
+      }
+      if (!param.fileId === false) {
+        this.fileId = param.fileId
+      }
       /* eslint-disable no-console */
       console.log('File download dialog created.', bvEvent, param.files)
       /* eslint-enable no-console */
@@ -64,6 +84,9 @@ export default {
       files.push(file)
       this.callDownloadApi(files)
     },
+    upload () {
+      this.callUploadApi(this.uploadingFiles)
+    },
     downloadAll () {
       this.callDownloadApi(this.files)
     },
@@ -72,6 +95,26 @@ export default {
     hideBvDownloadDialog () {
       this.files = []
       this.$refs.bv_dialog.hide()
+    },
+    callUploadApi (uploadingFiles) {
+      const formData = new FormData()
+      formData.append('file', uploadingFiles)
+      axios.post(
+        `/mapi/commons/upload`,
+        formData,
+        {
+          headers: {
+            'content-type': 'multipart/form-data'
+          }
+        }
+      ).then((resp) => {
+        if (!resp.data.errs === false &&
+          resp.data.errs.length > 0) {
+          this.bvMsgBoxErr(resp.data.errs)
+          this.processing = false
+        }
+        this.uploadingFiles = null
+      })
     },
     callDownloadApi (files) {
       axios.post(

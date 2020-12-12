@@ -104,6 +104,17 @@
                 </b-col>
                 <b-col sm="4">
                   <b-form-input
+                    v-if="eparam.valueType=='file'"
+                    :id="`eparam-${eparam.id}`"
+                    v-model="eparam.value"
+                    :placeholder="eparam.placeholder"
+                    :disabled="disabled || processing"
+                    required
+                    @click="fileUpload(eparam.value)"
+                    @focus="fileUpload(eparam.value)"
+                  />
+                  <b-form-input
+                    v-else
                     :id="`eparam-${eparam.id}`"
                     v-model="eparam.value"
                     :placeholder="eparam.placeholder"
@@ -274,7 +285,9 @@ export default {
 
     callHistory () {
     },
-
+    fileUpload (fileId) {
+      this.$root.$emit('bv::show::modal', 'bv_dialog', { files: null, uploadMode: true, fileId })
+    },
     generate () {
       this.processing = true
       axios.post(
