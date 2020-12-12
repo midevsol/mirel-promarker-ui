@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="container_title">
-      MSTE 払出画面
+      ProMarker 払出画面
     </div>
     <div class="inner">
       <div class="rightitems">
@@ -268,7 +268,6 @@ export default {
     },
 
     clearParams () {
-      this.fltStrSerialNo = this.defaultStore()
       this.eparams = []
       this.stencilConfig = this.defaultStencilConfig()
     },
