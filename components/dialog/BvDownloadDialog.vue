@@ -10,8 +10,8 @@
       title="File management"
     >
       <div v-if="uploadMode">
-        ファイル管理ID： {{ fileId }}
-        <b-form-file multiple v-model="uploadingFiles">
+        File ID : {{ fileId }}
+        <b-form-file multiple=false v-model="uploadingFiles">
         </b-form-file>
         <div class="d-block">
           <b-button class="mt-2" variant="outline-info" @click="upload()">
@@ -51,7 +51,7 @@ export default {
       files: [],
       uploadMode: false,
       fileId: null,
-      uploadingFiles: null
+      uploadingFiles: []
     }
   },
   mounted () {
@@ -85,7 +85,8 @@ export default {
       this.callDownloadApi(files)
     },
     upload () {
-      this.callUploadApi(this.uploadingFiles)
+      // cuurent version, not compatible to multi file.
+      this.callUploadApi(this.uploadingFiles[0])
     },
     downloadAll () {
       this.callDownloadApi(this.files)
@@ -96,24 +97,22 @@ export default {
       this.files = []
       this.$refs.bv_dialog.hide()
     },
-    callUploadApi (uploadingFiles) {
+    callUploadApi (uploadingFile) {
       const formData = new FormData()
-      formData.append('file', uploadingFiles)
+      formData.append('file', uploadingFile)
       axios.post(
         `/mapi/commons/upload`,
-        formData,
-        {
-          headers: {
-            'content-type': 'multipart/form-data'
-          }
-        }
-      ).then((resp) => {
+        formData).then((resp) => {
         if (!resp.data.errs === false &&
           resp.data.errs.length > 0) {
           this.bvMsgBoxErr(resp.data.errs)
           this.processing = false
         }
-        this.uploadingFiles = null
+        this.uploadingFiles = []
+        this.files.push({
+          name: resp.data.model.uuid,
+          fileId: resp.data.model.fileName
+        })
       })
     },
     callDownloadApi (files) {
@@ -149,6 +148,7 @@ export default {
         this.processing = false
       })
     },
+
     bvMsgBoxErr (message) {
       if (!message || message === undefined) {
         message = 'エラーが発生しました。管理者に問い合わせてください。'
