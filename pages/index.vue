@@ -12,15 +12,8 @@
           to="/mste"
           class="button--grey"
         >
-          MSTE
+          ProMarker
         </nuxt-link>
-        <a
-          href="https://dev.azure.com/mireljp/"
-          target="_blank"
-          class="button--grey"
-        >
-          mireljp-dev
-        </a>
       </div>
     </div>
   </div>

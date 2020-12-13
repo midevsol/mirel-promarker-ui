@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="container_title">
-      MSTE 払出画面
+      ProMarker 払出画面
     </div>
     <div class="inner">
       <div class="rightitems">
@@ -13,6 +13,9 @@
         </b-button>
         <b-button v-b-modal.modal-psv-dialog :disabled="disabled || processing" variant="secondary">
           📎Json形式
+        </b-button>
+        <b-button :disabled="disabled || processing " variant="secondary" @click="reloadStencilMaster()">
+          📄ステンシルマスタをリロード
         </b-button>
         <!--
         <b-button disabled variant="secondary" @click="callHistory()">
@@ -30,7 +33,7 @@
               <legend>ステンシル情報</legend>
               <b-row class="my-1">
                 <b-col sm="3">
-                  <label for="head_stencil_kind">分類</label>
+                  <label for="head_stencil_kind" class="pm_label">分類</label>
                 </b-col>
                 <b-col sm="9">
                   <b-form-select
@@ -45,7 +48,7 @@
               </b-row>
               <b-row class="my-1">
                 <b-col sm="3">
-                  <label for="head_stencil_cd">ステンシル</label>
+                  <label for="head_stencil_cd" class="pm_label">ステンシル</label>
                 </b-col>
                 <b-col sm="9">
                   <b-form-select
@@ -60,7 +63,7 @@
               </b-row>
               <b-row class="my-1">
                 <b-col sm="3">
-                  <label v-if="stencilConfig.description !== null" for="head_stencil_cd"> ステンシルについて</label>
+                  <label v-if="stencilConfig.description !== null" for="head_stencil_cd" class="pm_label"> ステンシルについて</label>
                 </b-col>
                 <b-col sm="9" style="text-align:left">
                   <span v-if="stencilConfig.description !== null">
@@ -71,7 +74,7 @@
               <b-row class="my-1">
                 <b-col sm="7" />
                 <b-col sm="1">
-                  <label for="head_serial_no">シリアル</label>
+                  <label for="head_serial_no" class="pm_label">シリアル</label>
                 </b-col>
                 <b-col sm="4">
                   <b-form-select
@@ -97,10 +100,21 @@
               <legend>データエレメント</legend>
               <b-row v-for="eparam in eparams" :key="eparam.id" class="my-1">
                 <b-col sm="3">
-                  <label :for="`eparam-${eparam.id}`">{{ eparam.name }}</label>
+                  <label :for="`eparam-${eparam.id}`" class="pm_label">{{ eparam.name }}</label>
                 </b-col>
                 <b-col sm="4">
                   <b-form-input
+                    v-if="eparam.valueType=='file'"
+                    :id="`eparam-${eparam.id}`"
+                    v-model="eparam.value"
+                    :placeholder="eparam.placeholder"
+                    :disabled="disabled || processing"
+                    required
+                    @click="fileUpload(eparam.value)"
+                    @focus="fileUpload(eparam.value)"
+                  />
+                  <b-form-input
+                    v-else
                     :id="`eparam-${eparam.id}`"
                     v-model="eparam.value"
                     :placeholder="eparam.placeholder"
@@ -231,6 +245,23 @@ export default {
       return ret
     },
 
+    async reloadStencilMaster () {
+      this.processing = true
+      await axios.post(
+        '/mapi/apps/mste/api/reloadStencilMaster',
+        { content: this.createRequest(this) }
+      ).then((resp) => {
+        // nop
+      }).catch((errors) => {
+        this.bvMsgBoxErr(errors)
+        this.processing = false
+        return false
+      })
+      this.clearParams()
+      this.refresh()
+      this.processing = false
+    },
+
     clearDelems () {
       this.clearParams()
       this.refresh()
@@ -248,14 +279,15 @@ export default {
     },
 
     clearParams () {
-      this.fltStrSerialNo = this.defaultStore()
       this.eparams = []
       this.stencilConfig = this.defaultStencilConfig()
     },
 
     callHistory () {
     },
-
+    fileUpload (fileId) {
+      this.$root.$emit('bv::show::modal', 'bv_dialog', { files: null, uploadMode: true, fileId })
+    },
     generate () {
       this.processing = true
       axios.post(

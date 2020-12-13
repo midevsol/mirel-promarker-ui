@@ -7,8 +7,18 @@
       scrollable
       centered
       ok-only
-      title="File download"
+      title="File management"
     >
+      <div v-if="uploadMode">
+        File ID : {{ fileId }}
+        <b-form-file multiple=false v-model="uploadingFiles">
+        </b-form-file>
+        <div class="d-block">
+          <b-button class="mt-2" variant="outline-info" @click="upload()">
+            Upload
+          </b-button>
+        </div>
+      </div>
       <p class="my-4">
         <ul>
           <template v-for="file in files">
@@ -38,12 +48,22 @@ export default {
     return {
       disabled: false,
       processing: false,
-      files: []
+      files: [],
+      uploadMode: false,
+      fileId: null,
+      uploadingFiles: []
     }
   },
   mounted () {
     this.$root.$on('bv::show::modal', (bvEvent, param) => {
       this.files = []
+      this.uploadMode = false
+      if (!param.uploadMode === false) {
+        this.uploadMode = param.uploadMode
+      }
+      if (!param.fileId === false) {
+        this.fileId = param.fileId
+      }
       /* eslint-disable no-console */
       console.log('File download dialog created.', bvEvent, param.files)
       /* eslint-enable no-console */
@@ -64,6 +84,10 @@ export default {
       files.push(file)
       this.callDownloadApi(files)
     },
+    upload () {
+      // cuurent version, not compatible to multi file.
+      this.callUploadApi(this.uploadingFiles[0])
+    },
     downloadAll () {
       this.callDownloadApi(this.files)
     },
@@ -72,6 +96,25 @@ export default {
     hideBvDownloadDialog () {
       this.files = []
       this.$refs.bv_dialog.hide()
+    },
+    callUploadApi (uploadingFile) {
+      const formData = new FormData()
+      formData.append('file', uploadingFile)
+      axios.post(
+        `/mapi/commons/upload`,
+        formData).then((resp) => {
+        if (!resp.data.errs === false &&
+          resp.data.errs.length > 0) {
+          this.bvMsgBoxErr(resp.data.errs)
+          this.processing = false
+        }
+        this.uploadingFiles = []
+        this.files.push({
+          fileId: resp.data.model.uuid,
+          name: resp.data.model.fileName
+        })
+        this.fileId = resp.data.model.uuid
+      })
     },
     callDownloadApi (files) {
       axios.post(
@@ -106,6 +149,7 @@ export default {
         this.processing = false
       })
     },
+
     bvMsgBoxErr (message) {
       if (!message || message === undefined) {
         message = 'エラーが発生しました。管理者に問い合わせてください。'

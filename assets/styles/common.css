@@ -109,7 +109,7 @@ input, textarea, select {
 }
 
 /* flexbox styles */
-label {
+.pm_label {
   order: 1;
   width: 10em;
   text-align: left;
