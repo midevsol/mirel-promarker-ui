@@ -110,9 +110,10 @@ export default {
         }
         this.uploadingFiles = []
         this.files.push({
-          name: resp.data.model.uuid,
-          fileId: resp.data.model.fileName
+          fileId: resp.data.model.uuid,
+          name: resp.data.model.fileName
         })
+        this.fileId = resp.data.model.uuid
       })
     },
     callDownloadApi (files) {
