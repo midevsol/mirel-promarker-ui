@@ -146,6 +146,7 @@
         centered
         scrollable
         size="lg"
+        no-close-on-backdrop
         @show="psvResetModal"
         @hidden="psvResetModal"
         @ok="psvHandleOk"

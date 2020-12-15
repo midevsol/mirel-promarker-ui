@@ -7,6 +7,7 @@
       scrollable
       centered
       ok-only
+      no-close-on-backdrop
       title="File management"
     >
       <div v-if="uploadMode">
