@@ -12,7 +12,7 @@
     >
       <div v-if="uploadMode">
         File ID : {{ fileId }}
-        <b-form-file multiple=false v-model="uploadingFiles">
+        <b-form-file :multiple=false v-model="uploadingFiles">
         </b-form-file>
         <div class="d-block">
           <b-button class="mt-2" variant="outline-info" @click="upload()">
