@@ -102,19 +102,22 @@
                 <b-col sm="3">
                   <label :for="`eparam-${eparam.id}`" class="pm_label">{{ eparam.name }}</label>
                 </b-col>
-                <b-col sm="4">
+                <b-col sm="1" v-if="eparam.valueType=='file'">
+                  <b-button @click="fileUpload(eparam.id, eparam.value)">
+                    📎
+                  </b-button>
+                </b-col>
+                <b-col sm="3" v-if="eparam.valueType=='file'">
                   <b-form-input
-                    v-if="eparam.valueType=='file'"
                     :id="`eparam-${eparam.id}`"
                     v-model="eparam.value"
                     :placeholder="eparam.placeholder"
-                    :disabled="disabled || processing"
+                    :disabled=true
                     required
-                    @click="fileUpload(eparam.value)"
-                    @focus="fileUpload(eparam.value)"
                   />
+                </b-col>
+                <b-col sm="4" v-else>
                   <b-form-input
-                    v-else
                     :id="`eparam-${eparam.id}`"
                     v-model="eparam.value"
                     :placeholder="eparam.placeholder"
@@ -170,14 +173,18 @@
         </form>
       </b-modal>
     </div>
+    <div>
+      <bvUpload @fixFileId="fixFileId" />
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
-
+import BvUpload from '~/components/dialog/BvDownloadDialog.vue'
 export default {
   layout: 'Main',
+  components: { BvUpload },
   data () {
     return {
       disabled: false,
@@ -186,6 +193,7 @@ export default {
       stencilNoSelected: true,
       cateogryNoSelected: true,
       eparams: [],
+      fileNames: {},
       stencilConfig: this.defaultStencilConfig,
       fltStrStencilCategory: {
         'selected': '',
@@ -286,8 +294,24 @@ export default {
 
     callHistory () {
     },
-    fileUpload (fileId) {
-      this.$root.$emit('bv::show::modal', 'bv_dialog', { files: null, uploadMode: true, fileId })
+
+    fileUpload (uploadingItemId, fileId) {
+      const files = []
+      const fileIdSplited = fileId.split(',')
+      for (const i in fileIdSplited) {
+        let name = 'nontitle'
+        if (!this.fileNames[fileIdSplited[i]] === false) {
+          name = this.fileNames[fileIdSplited[i]].fileName
+        }
+        files.push(
+          {
+            fileId: fileIdSplited[i],
+            name
+          }
+        )
+      }
+
+      this.$root.$emit('bv::show::modal', 'bv_dialog', { files, uploadMode: true, uploadingItemId })
     },
     generate () {
       this.processing = true
@@ -533,6 +557,23 @@ export default {
         this.$refs.modal.hide()
       })
       this.processing = false
+    },
+    fixFileId (data) {
+      let fileIds = ''
+      for (const i in data.files) {
+        this.fileNames[data.files[i].fileId] = { fileName: data.files[i].name }
+        fileIds += data.files[i].fileId
+        fileIds += ','
+      }
+      fileIds = fileIds.slice(0, -1)
+
+      const eparams = Object.assign(this.eparams)
+      this.setEparamById(eparams, data.uploadingItemId, fileIds)
+      Object.assign(this.eparams, eparams)
+      this.eparams.splice()
+
+      console.log(data)
+      console.log(this.fileNames)
     },
     defaultStore () {
       return {
