@@ -1,9 +1,9 @@
 {
-  "name": "mipla-v",
+  "name": "promarker-ui",
   "version": "1.0.0",
-  "description": "mipla frontend project",
-  "author": "ve",
-  "private": true,
+  "description": "Promarker UI project.",
+  "author": "vemi/vemic",
+  "private": false,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
