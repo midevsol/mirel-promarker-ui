@@ -297,18 +297,20 @@ export default {
 
     fileUpload (uploadingItemId, fileId) {
       const files = []
-      const fileIdSplited = fileId.split(',')
-      for (const i in fileIdSplited) {
-        let name = 'nontitle'
-        if (!this.fileNames[fileIdSplited[i]] === false) {
-          name = this.fileNames[fileIdSplited[i]].fileName
-        }
-        files.push(
-          {
-            fileId: fileIdSplited[i],
-            name
+      if (fileId.length > 0) {
+        const fileIdSplited = fileId.split(',')
+        for (const i in fileIdSplited) {
+          let name = 'ファイル'
+          if (!this.fileNames[fileIdSplited[i]] === false) {
+            name = this.fileNames[fileIdSplited[i]].fileName
           }
-        )
+          files.push(
+            {
+              fileId: fileIdSplited[i],
+              name
+            }
+          )
+        }
       }
 
       this.$root.$emit('bv::show::modal', 'bv_dialog', { files, uploadMode: true, uploadingItemId })
