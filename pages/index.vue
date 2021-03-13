@@ -14,19 +14,20 @@
         >
           ProMarker
         </nuxt-link>
+        <div>
+          <demo-ag-grid-1 />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
+import DemoAgGrid1 from '~/components/pane/DemoAgGrid1.vue'
 export default {
   layout: 'Main',
   components: {
+    DemoAgGrid1
   }
 }
 </script>
-
-<style lang="css">
-</style>
