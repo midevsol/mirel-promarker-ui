@@ -14,6 +14,12 @@
     "debug": "node --inspect-brk=9229 node_modules/nuxt/bin/nuxt"
   },
   "dependencies": {
+    "@ag-grid-community/all-modules": "^25.1.0",
+    "@ag-grid-community/client-side-row-model": "^25.1.0",
+    "@ag-grid-community/core": "^25.1.0",
+    "@ag-grid-community/csv-export": "^25.1.0",
+    "@ag-grid-community/infinite-row-model": "^25.1.0",
+    "@ag-grid-community/polymer": "^25.1.0",
     "@ag-grid-community/vue3": "^25.1.0",
     "@nuxtjs/axios": "^5.3.6",
     "bootstrap": "^4.1.3",
