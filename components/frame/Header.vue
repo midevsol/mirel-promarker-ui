@@ -13,6 +13,12 @@
           <b-nav-item to="/mste">
             ProMarker
           </b-nav-item>
+          <b-nav-item to="/apprunner">
+            AppRunner
+          </b-nav-item>
+          <b-nav-item to="/sampleui">
+            Sample UI
+          </b-nav-item>
         </b-navbar-nav>
       </b-collapse>
       <b-navbar-nav class="ml-auto">

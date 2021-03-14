@@ -5,7 +5,7 @@
         mirelplatform
       </h1>
       <h2 class="subtitle">
-        frontend service
+        FRONT SERVICE
       </h2>
       <div class="links">
         <nuxt-link
@@ -14,20 +14,27 @@
         >
           ProMarker
         </nuxt-link>
-        <div>
-          <demo-ag-grid-1 />
-        </div>
+        <nuxt-link
+          to="/apprunner"
+          class="button--grey"
+        >
+          AppRunner
+        </nuxt-link>
+        <nuxt-link
+          to="/sampleui"
+          class="button--grey"
+        >
+          Sample UI
+        </nuxt-link>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import DemoAgGrid1 from '~/components/pane/DemoAgGrid1.vue'
 export default {
   layout: 'Main',
   components: {
-    DemoAgGrid1
   }
 }
 </script>
