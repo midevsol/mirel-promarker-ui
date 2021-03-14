@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import DemoAgGrid1 from '~/components/pane/DemoAgGrid1.vue'
 export default {
   layout: 'Main',
