@@ -13,6 +13,23 @@
         </b-button>
       </div>
       <hr>
+      <div>
+        <form ref="form1" @submit.stop.prevent="mainHandleSubmit">
+          <b-form-group
+            invalid-feedback="Required item error."
+          >
+            <b-container fluid>
+              <legend>実行パラメータ</legend>
+            </b-container>
+
+            <hr>
+            <b-button :disabled="disabled || processing || serialNoNoSelected" @click="generate()" variant="primary">
+              Generate
+            </b-button>
+            <hr>
+          </b-form-group>
+        </form>
+      </div>
     </div>
   </div>
 </template>
