@@ -5,16 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Chrome",
-            "request": "launch",
-            "type": "pwa-chrome",
-            "url": "http://localhost:8081",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--repote-debugging-port=9222"
-            ]
-        },
-        {
             "name": "Launch via NPM",
             "request": "launch",
             "runtimeArgs": [
@@ -25,7 +15,20 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "type": "pwa-node"
+            "type": "node"
+        },
+        {
+            "name": "Launch Dev",
+            "request": "launch",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
+            "runtimeExecutable": "npm",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
         }
     ]
 }
